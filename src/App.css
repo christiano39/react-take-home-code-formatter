@@ -24,3 +24,20 @@ button {
 .line:nth-child(3) {
   margin-left: 20px;
 }
+
+.number {
+  color: red;
+}
+
+.variable {
+  color: blue;
+  font-weight: bold;
+}
+
+.reserved {
+  font-weight: bold;
+}
+
+.string {
+  color: green;
+}
