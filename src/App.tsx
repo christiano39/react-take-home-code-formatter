@@ -6,10 +6,12 @@ interface SyntaxIndices {
   [key: number]: number[][];
 }
 
+const initialLines = ['for (let i = 1; i <= 10; i++) {', '    console.log(`Pass number ${i}`);', '}'];
+
 function App() {
   const [showFormatted, setShowFormatted] = useState(false);
-
-  const lines = ['for (let i = 1; i <= 10; i++) {', '    console.log(`Pass number ${i}`);', '}'];
+  const [codeInput, setCodeInput] = useState(initialLines.join('\n'));
+  const [lines, setLines] = useState(initialLines);
 
   const formatCode = () => {
     setShowFormatted(prev => !prev);
@@ -17,6 +19,12 @@ function App() {
 
   const renderUnformattedCode = () => {
     return lines.map((line, i) => <div key={i} className='line'>{line}</div>);
+  };
+
+  const handleCodeChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setCodeInput(e.target.value);
+    console.log(e.target.value);
+    setLines(e.target.value.split('\n'));
   };
 
   const getSyntaxToBeHighlighted = (): string[][] => {
@@ -44,8 +52,8 @@ function App() {
   }
 
   const getIndicesOf = (searchStr: string, str: string) => {
-    const searchStrLen = searchStr.length;
-    if (searchStrLen == 0) {
+    const searchStrLen = searchStr?.length;
+    if (searchStrLen === 0) {
         return [];
     }
     let startIndex = 0, index, indices = [];
@@ -54,7 +62,7 @@ function App() {
         startIndex = index + searchStrLen;
     }
     return indices;
-}
+  }
 
   const getIndicesToBeHighlighted = (reserved: string[], variables: string[], numbers: string[], strings: string[]) => {
     const reservedIndices: SyntaxIndices = {};
@@ -98,32 +106,32 @@ function App() {
       let formattedLine: JSX.Element[] = [];
       line.split('').forEach((char, j) => {
         let matched = false;
-        reservedIndices[i] && reservedIndices[i].forEach(indices => {
+        variableIndices[i] && variableIndices[i].forEach(indices => {
           if (j >= indices[0] && j <= indices[1]) {
-            formattedLine.push(<span key={j} className='reserved'>{char}</span>)
-            matched = true;
-          }
-        })
-        !matched && variableIndices[i] && variableIndices[i].forEach(indices => {
-          if (j >= indices[0] && j <= indices[1]) {
-            formattedLine.push(<span key={j} className='variable'>{char}</span>)
+            formattedLine.push(<span key={`${i}${j}`} className='variable'>{char}</span>)
             matched = true;
           }
         })
         !matched && numberIndices[i] && numberIndices[i].forEach(indices => {
           if (j >= indices[0] && j <= indices[1]) {
-            formattedLine.push(<span key={j} className='number'>{char}</span>)
+            formattedLine.push(<span key={`${i}${j}`} className='number'>{char}</span>)
             matched = true;
           }
         })
         !matched && stringIndices[i] && stringIndices[i].forEach(indices => {
           if (j >= indices[0] && j <= indices[1]) {
-            formattedLine.push(<span key={j} className='string'>{char}</span>)
+            formattedLine.push(<span key={`${i}${j}`} className='string'>{char}</span>)
+            matched = true;
+          }
+        })
+        !matched && reservedIndices[i] && reservedIndices[i].forEach(indices => {
+          if (j >= indices[0] && j <= indices[1]) {
+            formattedLine.push(<span key={`${i}${j}`} className='reserved'>{char}</span>)
             matched = true;
           }
         })
         if (!matched) {
-          formattedLine.push(<span key={j}>{char}</span>)
+          formattedLine.push(<span key={`${i}${j}`}>{char}</span>)
         }
       })
       return <div key={i} className='line'>{formattedLine}</div>;
@@ -136,7 +144,7 @@ function App() {
       <div className='code-wrap'>
         <div className='column'>
           <h1>Code</h1>
-          {renderUnformattedCode()}
+          <textarea value={codeInput} onChange={handleCodeChange} rows={15} cols={40}/>
         </div>
         <div className='column'>
           <button onClick={formatCode}>{showFormatted ? 'Remove Formatting' : 'Format Code'}</button>
@@ -146,6 +154,9 @@ function App() {
           {showFormatted ? renderFormattedCode() : renderUnformattedCode()}
         </div>
       </div>
+      {/* <div className='code-wrap'>
+        <textarea value={codeInput} onChange={handleCodeChange}/>
+      </div> */}
     </div>
   );
 }
