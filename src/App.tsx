@@ -34,6 +34,7 @@ function App() {
 
   const makeUnique = (value: string, index: number, self: string[]) => self.indexOf(value) === index;
 
+  // Loops through lines and returns an array of arrays of syntax words that have been found
   const getSyntaxToBeHighlighted = (): string[][] => {
     let reserved: string[] = [];
     let variables: string[] = [];
@@ -67,6 +68,7 @@ function App() {
     return [reserved, variables, numbers, strings, stringTemplates];
   };
 
+  // Gets the start and end indices of a search term in a string
   const getIndicesOf = (searchStr: string, str: string) => {
     const searchStrLen = searchStr?.length;
     if (searchStrLen === 0) {
@@ -80,6 +82,7 @@ function App() {
     return indices;
   };
 
+  // Gets the start and end indices of each syntax word that was found
   const getIndicesToBeHighlighted = (reserved: string[], variables: string[], numbers: string[], strings: string[], stringTemplates: string[]) => {
     const reservedIndices: SyntaxIndices = {};
     const variableIndices: SyntaxIndices = {};
@@ -125,6 +128,7 @@ function App() {
     // Rules: All numbers red, All vars blue and bold, All reserved keywords bold, All string literals green
     const [reserved, variables, numbers, strings, stringTemplates] = getSyntaxToBeHighlighted();
     const [reservedIndices, variableIndices, numberIndices, stringIndices, stringTemplateIndices] = getIndicesToBeHighlighted(reserved, variables, numbers, strings, stringTemplates);
+    // loops through each character and decides which style should be applied based on the index of the character and the priority order of the syntax types
     return lines.map((line, i) => {
       let formattedLine: JSX.Element[] = [];
       line.split('').forEach((char, j) => {
