@@ -49,7 +49,7 @@ function App() {
             variables.push(words[i + 1]);
           }
         }
-        if (parseFloat(word) || parseInt(word)) {
+        if (parseFloat(word) || parseInt(word) || word === '0') {
           const digits = word.split('');
           numbers.push(...digits);
         }
@@ -127,7 +127,8 @@ function App() {
     const [reservedIndices, variableIndices, numberIndices, stringIndices, stringTemplateIndices] = getIndicesToBeHighlighted(reserved, variables, numbers, strings, stringTemplates);
     return lines.map((line, i) => {
       let formattedLine: JSX.Element[] = [];
-      line.split('').forEach((char, j) => {
+      console.log(line.split(/(\s+)/))
+      line.split(/(\s+)/).forEach((char, j) => {
         let matched = false;
         stringIndices[i] && stringIndices[i].forEach(indices => {
           if (j >= indices[0] && j <= indices[1]) {
