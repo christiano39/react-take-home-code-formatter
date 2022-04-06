@@ -64,4 +64,6 @@ export const VARIABLE_WORDS = ['let', 'const', 'var']
 
 export const WORD_REGEX = /[, ;()]+/
 
-export const STRING_REGEX = /['"`]+/
+export const STRING_REGEX = /['"]+/
+
+export const STRING_TEMPLATE_REGEX = /[`]/

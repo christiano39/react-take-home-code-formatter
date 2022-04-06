@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
-import { RESERVED_WORDS, VARIABLE_WORDS, WORD_REGEX, STRING_REGEX } from './constants';
+import {
+  RESERVED_WORDS,
+  VARIABLE_WORDS,
+  WORD_REGEX,
+  STRING_REGEX,
+  STRING_TEMPLATE_REGEX
+} from './constants';
 import './App.css';
 
 interface SyntaxIndices {
@@ -31,6 +37,7 @@ function App() {
     const variables: string[] = []
     let numbers: string[] = []
     const strings: string[] = []
+    const stringTemplates: string[] = []
     lines.forEach(line => {
       const words = line.split(WORD_REGEX)
       words.forEach((word, i) => {
@@ -47,9 +54,11 @@ function App() {
       })
       const string = line.split(STRING_REGEX)[1]
       if (string) strings.push(string);
+      const stringTemplate = line.split(STRING_TEMPLATE_REGEX)[1]
+      if (stringTemplate) stringTemplates.push(stringTemplate);
     })
     numbers = numbers.filter((value, index, self) => self.indexOf(value) === index)
-    return [reserved, variables, numbers, strings]
+    return [reserved, variables, numbers, strings, stringTemplates]
   }
 
   const getIndicesOf = (searchStr: string, str: string) => {
@@ -65,11 +74,12 @@ function App() {
     return indices;
   }
 
-  const getIndicesToBeHighlighted = (reserved: string[], variables: string[], numbers: string[], strings: string[]) => {
+  const getIndicesToBeHighlighted = (reserved: string[], variables: string[], numbers: string[], strings: string[], stringTemplates: string[]) => {
     const reservedIndices: SyntaxIndices = {};
     const variableIndices: SyntaxIndices = {};
     const numberIndices: SyntaxIndices = {};
     const stringIndices: SyntaxIndices = {};
+    const stringTemplateIndices: SyntaxIndices = {};
     lines.forEach((line, i) => {
       reserved.forEach(reservedKeyword => {
         const indices = getIndicesOf(reservedKeyword, line);
@@ -95,21 +105,27 @@ function App() {
           stringIndices[i] = [...(stringIndices[i] || []), ...indices];
         }
       })
+      stringTemplates.forEach(stringTemplate => {
+        const indices = getIndicesOf(stringTemplate, line);
+        if (indices.length) {
+          stringTemplateIndices[i] = [...(stringTemplateIndices[i] || []), ...indices];
+        }
+      })
     })
-    return [reservedIndices, variableIndices, numberIndices, stringIndices]
+    return [reservedIndices, variableIndices, numberIndices, stringIndices, stringTemplateIndices]
   }
 
   const renderFormattedCode = () => {
     // Rules: All numbers red, All vars blue and bold, All reserved keywords bold, All string literals green
-    const [reserved, variables, numbers, strings] = getSyntaxToBeHighlighted();
-    const [reservedIndices, variableIndices, numberIndices, stringIndices] = getIndicesToBeHighlighted(reserved, variables, numbers, strings);
+    const [reserved, variables, numbers, strings, stringTemplates] = getSyntaxToBeHighlighted();
+    const [reservedIndices, variableIndices, numberIndices, stringIndices, stringTemplateIndices] = getIndicesToBeHighlighted(reserved, variables, numbers, strings, stringTemplates);
     return lines.map((line, i) => {
       let formattedLine: JSX.Element[] = [];
       line.split('').forEach((char, j) => {
         let matched = false;
-        variableIndices[i] && variableIndices[i].forEach(indices => {
+        stringIndices[i] && stringIndices[i].forEach(indices => {
           if (j >= indices[0] && j <= indices[1]) {
-            formattedLine.push(<span key={`${i}${j}`} className='variable'>{char}</span>)
+            formattedLine.push(<span key={`${i}${j}`} className='string'>{char}</span>)
             matched = true;
           }
         })
@@ -119,7 +135,13 @@ function App() {
             matched = true;
           }
         })
-        !matched && stringIndices[i] && stringIndices[i].forEach(indices => {
+        !matched && variableIndices[i] && variableIndices[i].forEach(indices => {
+          if (j >= indices[0] && j <= indices[1]) {
+            formattedLine.push(<span key={`${i}${j}`} className='variable'>{char}</span>)
+            matched = true;
+          }
+        })
+        !matched && stringTemplateIndices[i] && stringTemplateIndices[i].forEach(indices => {
           if (j >= indices[0] && j <= indices[1]) {
             formattedLine.push(<span key={`${i}${j}`} className='string'>{char}</span>)
             matched = true;
