@@ -10,7 +10,7 @@ import './App.css';
 
 interface SyntaxIndices {
   [key: number]: number[][];
-}
+};
 
 const initialLines = ['for (let i = 1; i <= 10; i++) {', '    console.log(`Pass number ${i}`);', '}'];
 
@@ -32,40 +32,40 @@ function App() {
     setLines(e.target.value.split('\n'));
   };
 
-  const makeUnique = (value: string, index: number, self: string[]) => self.indexOf(value) === index
+  const makeUnique = (value: string, index: number, self: string[]) => self.indexOf(value) === index;
 
   const getSyntaxToBeHighlighted = (): string[][] => {
-    let reserved: string[] = []
-    let variables: string[] = []
-    let numbers: string[] = []
-    let strings: string[] = []
-    let stringTemplates: string[] = []
+    let reserved: string[] = [];
+    let variables: string[] = [];
+    let numbers: string[] = [];
+    let strings: string[] = [];
+    let stringTemplates: string[] = [];
     lines.forEach(line => {
-      const words = line.split(WORD_REGEX)
+      const words = line.split(WORD_REGEX);
       words.forEach((word, i) => {
         if (RESERVED_WORDS.includes(word)) {
-          reserved.push(word)
+          reserved.push(word);
           if (VARIABLE_WORDS.includes(word)) {
-            variables.push(words[i + 1])
+            variables.push(words[i + 1]);
           }
         }
         if (parseFloat(word) || parseInt(word)) {
-          const digits = word.split('')
-          numbers.push(...digits)
+          const digits = word.split('');
+          numbers.push(...digits);
         }
       })
-      const string = line.split(STRING_REGEX)[1]
+      const string = line.split(STRING_REGEX)[1];
       if (string) strings.push(string);
-      const stringTemplate = line.split(STRING_TEMPLATE_REGEX)[1]
+      const stringTemplate = line.split(STRING_TEMPLATE_REGEX)[1];
       if (stringTemplate) stringTemplates.push(stringTemplate);
     })
-    reserved = reserved.filter(makeUnique)
-    variables = variables.filter(makeUnique)
-    numbers = numbers.filter(makeUnique)
-    strings = strings.filter(makeUnique)
-    stringTemplates = stringTemplates.filter(makeUnique)
-    return [reserved, variables, numbers, strings, stringTemplates]
-  }
+    reserved = reserved.filter(makeUnique);
+    variables = variables.filter(makeUnique);
+    numbers = numbers.filter(makeUnique);
+    strings = strings.filter(makeUnique);
+    stringTemplates = stringTemplates.filter(makeUnique);
+    return [reserved, variables, numbers, strings, stringTemplates];
+  };
 
   const getIndicesOf = (searchStr: string, str: string) => {
     const searchStrLen = searchStr?.length;
@@ -78,7 +78,7 @@ function App() {
         startIndex = index + searchStrLen;
     }
     return indices;
-  }
+  };
 
   const getIndicesToBeHighlighted = (reserved: string[], variables: string[], numbers: string[], strings: string[], stringTemplates: string[]) => {
     const reservedIndices: SyntaxIndices = {};
@@ -131,36 +131,36 @@ function App() {
         let matched = false;
         stringIndices[i] && stringIndices[i].forEach(indices => {
           if (j >= indices[0] && j <= indices[1]) {
-            formattedLine.push(<span key={`${i}${j}`} className='string'>{char}</span>)
+            formattedLine.push(<span key={`${i}${j}`} className='string'>{char}</span>);
             matched = true;
           }
         })
         !matched && numberIndices[i] && numberIndices[i].forEach(indices => {
           if (j >= indices[0] && j <= indices[1]) {
-            formattedLine.push(<span key={`${i}${j}`} className='number'>{char}</span>)
+            formattedLine.push(<span key={`${i}${j}`} className='number'>{char}</span>);
             matched = true;
           }
         })
         !matched && variableIndices[i] && variableIndices[i].forEach(indices => {
           if (j >= indices[0] && j <= indices[1]) {
-            formattedLine.push(<span key={`${i}${j}`} className='variable'>{char}</span>)
+            formattedLine.push(<span key={`${i}${j}`} className='variable'>{char}</span>);
             matched = true;
           }
         })
         !matched && stringTemplateIndices[i] && stringTemplateIndices[i].forEach(indices => {
           if (j >= indices[0] && j <= indices[1]) {
-            formattedLine.push(<span key={`${i}${j}`} className='string'>{char}</span>)
+            formattedLine.push(<span key={`${i}${j}`} className='string'>{char}</span>);
             matched = true;
           }
         })
         !matched && reservedIndices[i] && reservedIndices[i].forEach(indices => {
           if (j >= indices[0] && j <= indices[1]) {
-            formattedLine.push(<span key={`${i}${j}`} className='reserved'>{char}</span>)
+            formattedLine.push(<span key={`${i}${j}`} className='reserved'>{char}</span>);
             matched = true;
           }
         })
         if (!matched) {
-          formattedLine.push(<span key={`${i}${j}`}>{char}</span>)
+          formattedLine.push(<span key={`${i}${j}`}>{char}</span>);
         }
       })
       return <div key={i} className='line'>{formattedLine}</div>;
