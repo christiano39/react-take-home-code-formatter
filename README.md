@@ -34,6 +34,10 @@ And with that, we have the basic starter code rendering correctly
     - having a variable inside template quotes (``) will still render as blue even without wrapping it in ${}
     - having 2 variables, one being a substring in the other will cause a problem when formatted:
         - `let i = 0; let item = null;` will render as `let i = 0; let iitem = null;`
+    - leading whitespace from the text editor is not preserved, so there is no indentation except for in the second line of the default provided code, which is indented because of the default styling
+
+- Potential refactors
+    - instead of having 5 seperate arrays for the different syntax types that each need to be looped through with repetetive code, I could condense them into an object. The reason I didn't do that here is that my Typescript knowledge is very limited, and I was running into some issues that would require a deeper understanding that I think would take a little more time than the scope of this project
 
 ## Available Scripts
 
