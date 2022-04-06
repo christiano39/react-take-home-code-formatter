@@ -127,8 +127,7 @@ function App() {
     const [reservedIndices, variableIndices, numberIndices, stringIndices, stringTemplateIndices] = getIndicesToBeHighlighted(reserved, variables, numbers, strings, stringTemplates);
     return lines.map((line, i) => {
       let formattedLine: JSX.Element[] = [];
-      console.log(line.split(/(\s+)/))
-      line.split(/(\s+)/).forEach((char, j) => {
+      line.split('').forEach((char, j) => {
         let matched = false;
         stringIndices[i] && stringIndices[i].forEach(indices => {
           if (j >= indices[0] && j <= indices[1]) {
