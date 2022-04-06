@@ -38,6 +38,7 @@ And with that, we have the basic starter code rendering correctly
 
 - Potential refactors
     - instead of having 5 seperate arrays for the different syntax types that each need to be looped through with repetetive code, I could condense them into an object. The reason I didn't do that here is that my Typescript knowledge is very limited, and I was running into some issues that would require a deeper understanding that I think would take a little more time than the scope of this project
+    - could probably find the index of the syntax words when they are found, instead of finding all of them and then making another loop to get their indices
 
 ## Available Scripts
 
