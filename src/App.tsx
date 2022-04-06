@@ -135,12 +135,6 @@ function App() {
             matched = true;
           }
         })
-        !matched && numberIndices[i] && numberIndices[i].forEach(indices => {
-          if (j >= indices[0] && j <= indices[1]) {
-            formattedLine.push(<span key={`${i}${j}`} className='number'>{char}</span>);
-            matched = true;
-          }
-        })
         !matched && variableIndices[i] && variableIndices[i].forEach(indices => {
           if (j >= indices[0] && j <= indices[1]) {
             formattedLine.push(<span key={`${i}${j}`} className='variable'>{char}</span>);
@@ -150,6 +144,12 @@ function App() {
         !matched && stringTemplateIndices[i] && stringTemplateIndices[i].forEach(indices => {
           if (j >= indices[0] && j <= indices[1]) {
             formattedLine.push(<span key={`${i}${j}`} className='string'>{char}</span>);
+            matched = true;
+          }
+        })
+        !matched && numberIndices[i] && numberIndices[i].forEach(indices => {
+          if (j >= indices[0] && j <= indices[1]) {
+            formattedLine.push(<span key={`${i}${j}`} className='number'>{char}</span>);
             matched = true;
           }
         })
