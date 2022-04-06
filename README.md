@@ -1,6 +1,39 @@
-# Getting Started with Create React App
+## Christian Arneson Take Home Code Formatter
+This is my first pass solution for the take home code formatter. There is definitely still plenty of room for optimization and refactorization, but I think that would take me a little more time to learn about Typescript. This was my first time using Typescript, and there are still many things that I don't understand yet.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Solution Overview
+This is a brief overview of my first thoughts on a solution to this problem that I've implemented.
+- For each line
+    - split line by spaces, commas, semicolons, and parentheses so that only individual words are left
+    - get reserved keywords by comparing to a list of pre-defined keywords
+    - get variables by looking at the word after 'let', 'const', or 'var'
+    - get numbers using parseInt and parseFloat
+    - get strings by splitting the line by ' and "
+    - get templates by splitting the line by `
+    - put all of the above into an arrays, and make the array items unique
+
+At this point, I first tried to then go through each line and match the text with each of the extracted syntax words above. After it found a match, I was trying to replace the matched text with a styled <span> element. Getting this to work without using dangerouslySetInnerHtml was not looking very promising, so I switched up my approach by continuing with the following:
+
+- For each line, and for each syntax type (reserved, variable, ect.)
+    - find the index range at which each syntax type apears on each line and store that range
+    - now for every character index of the code string, we know what type of styling to apply to it
+
+- Rendering
+    - for each character in each line
+        - check if the current index belongs to a certain syntax type
+        - if yes, apply the respective style to that character
+        - if no, render the character un-styled
+
+And with that, we have the basic starter code rendering correctly
+
+- Additional features
+    - live editor, so that the assessor doesn't have to go in and manually change the 'lines' array
+    - strings and string templates are differentiated, for example if there is a variable named myVar, the string 'This is myVar' will be styled as only green, whereas \`This is ${myVar}\` will be green except for the variable which will be blue
+
+- Known issues
+    - having a variable inside template quotes (``) will still render as blue even without wrapping it in ${}
+    - having 2 variables, one being a substring in the other will cause a problem when formatted:
+        - `let i = 0; let item = null;` will render as `let i = 0; let iitem = null;`
 
 ## Available Scripts
 
