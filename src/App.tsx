@@ -23,14 +23,13 @@ function App() {
 
   const handleCodeChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setCodeInput(e.target.value);
-    console.log(e.target.value);
     setLines(e.target.value.split('\n'));
   };
 
   const getSyntaxToBeHighlighted = (): string[][] => {
     const reserved: string[] = []
     const variables: string[] = []
-    const numbers: string[] = []
+    let numbers: string[] = []
     const strings: string[] = []
     lines.forEach(line => {
       const words = line.split(WORD_REGEX)
@@ -42,12 +41,14 @@ function App() {
           }
         }
         if (parseFloat(word) || parseInt(word)) {
-          numbers.push(word)
+          const digits = word.split('')
+          numbers.push(...digits)
         }
       })
       const string = line.split(STRING_REGEX)[1]
       if (string) strings.push(string);
     })
+    numbers = numbers.filter((value, index, self) => self.indexOf(value) === index)
     return [reserved, variables, numbers, strings]
   }
 
