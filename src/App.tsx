@@ -32,12 +32,14 @@ function App() {
     setLines(e.target.value.split('\n'));
   };
 
+  const makeUnique = (value: string, index: number, self: string[]) => self.indexOf(value) === index
+
   const getSyntaxToBeHighlighted = (): string[][] => {
-    const reserved: string[] = []
-    const variables: string[] = []
+    let reserved: string[] = []
+    let variables: string[] = []
     let numbers: string[] = []
-    const strings: string[] = []
-    const stringTemplates: string[] = []
+    let strings: string[] = []
+    let stringTemplates: string[] = []
     lines.forEach(line => {
       const words = line.split(WORD_REGEX)
       words.forEach((word, i) => {
@@ -57,7 +59,11 @@ function App() {
       const stringTemplate = line.split(STRING_TEMPLATE_REGEX)[1]
       if (stringTemplate) stringTemplates.push(stringTemplate);
     })
-    numbers = numbers.filter((value, index, self) => self.indexOf(value) === index)
+    reserved = reserved.filter(makeUnique)
+    variables = variables.filter(makeUnique)
+    numbers = numbers.filter(makeUnique)
+    strings = strings.filter(makeUnique)
+    stringTemplates = stringTemplates.filter(makeUnique)
     return [reserved, variables, numbers, strings, stringTemplates]
   }
 
@@ -177,9 +183,6 @@ function App() {
           {showFormatted ? renderFormattedCode() : renderUnformattedCode()}
         </div>
       </div>
-      {/* <div className='code-wrap'>
-        <textarea value={codeInput} onChange={handleCodeChange}/>
-      </div> */}
     </div>
   );
 }
